@@ -1,0 +1,1 @@
+-- Main PostgreSQL table definitions will be added here.

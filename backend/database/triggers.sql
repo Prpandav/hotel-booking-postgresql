@@ -1,0 +1,1 @@
+-- PostgreSQL triggers will be added here.

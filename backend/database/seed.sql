@@ -1,0 +1,1 @@
+-- Sample hotel data will be added here.
