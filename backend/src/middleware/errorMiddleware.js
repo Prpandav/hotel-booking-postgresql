@@ -36,6 +36,12 @@ const getPostgresError = (error) => {
         message: "A value has an invalid data type or format",
       };
 
+    case "23P01":
+      return {
+        status: 409,
+        message: "The room already has an overlapping booking",
+      };
+
     default:
       return null;
   }
