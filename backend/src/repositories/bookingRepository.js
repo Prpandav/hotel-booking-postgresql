@@ -588,3 +588,304 @@ export const cancelBooking = async (bookingId) => {
     client.release();
   }
 };
+
+export const checkInBooking = async (bookingId) => {
+  const client = await getClient();
+
+  try {
+    await client.query("BEGIN");
+
+    /*
+     * Lock booking and room.
+     *
+     * Nobody else can simultaneously modify
+     * these records until COMMIT or ROLLBACK.
+     */
+    const result = await client.query(
+      `
+        SELECT
+          bookings.id,
+          bookings.status,
+          bookings.room_id,
+          bookings.check_in_date,
+          bookings.check_out_date,
+          bookings.total_amount,
+
+          rooms.status
+            AS room_status,
+
+          rooms.is_active,
+
+          COALESCE(
+            booking_payment_summary.remaining_balance,
+            bookings.total_amount
+          ) AS remaining_balance
+
+        FROM bookings
+
+        INNER JOIN rooms
+          ON bookings.room_id =
+             rooms.id
+
+        LEFT JOIN booking_payment_summary
+          ON bookings.id =
+             booking_payment_summary.booking_id
+
+        WHERE bookings.id = $1
+
+        FOR UPDATE OF bookings, rooms
+      `,
+      [bookingId],
+    );
+
+    if (result.rows.length === 0) {
+      throw createError("Booking not found", 404);
+    }
+
+    const booking = result.rows[0];
+
+    /*
+     * Booking must already be confirmed.
+     */
+    if (booking.status !== "confirmed") {
+      throw createError("Only confirmed bookings can be checked in", 409);
+    }
+
+    /*
+     * Cannot check in before booked date.
+     */
+    const dateResult = await client.query(
+      `
+          SELECT
+
+            CURRENT_DATE < $1::DATE
+              AS too_early,
+
+            CURRENT_DATE >= $2::DATE
+              AS stay_expired
+        `,
+      [booking.check_in_date, booking.check_out_date],
+    );
+
+    if (dateResult.rows[0].too_early) {
+      throw createError(
+        "Guest cannot check in before the booked check-in date",
+        409,
+      );
+    }
+
+    if (dateResult.rows[0].stay_expired) {
+      throw createError("The booking stay period has already ended", 409);
+    }
+
+    /*
+     * Customer must have fully paid.
+     */
+    if (Number(booking.remaining_balance) > 0) {
+      throw createError(
+        `Booking has a remaining balance of ${Number(
+          booking.remaining_balance,
+        ).toFixed(2)}`,
+        409,
+      );
+    }
+
+    if (!booking.is_active) {
+      throw createError("Room is inactive", 409);
+    }
+
+    /*
+     * Physical room must currently
+     * be ready for occupation.
+     */
+    if (booking.room_status !== "available") {
+      throw createError(
+        `Room cannot be checked in because its current status is ${booking.room_status}`,
+        409,
+      );
+    }
+
+    /*
+     * Update booking.
+     *
+     * Our PostgreSQL trigger automatically
+     * writes to booking_status_history.
+     */
+    await client.query(
+      `
+        UPDATE bookings
+
+        SET
+          status = 'checked_in',
+          updated_at =
+            CURRENT_TIMESTAMP
+
+        WHERE id = $1
+      `,
+      [bookingId],
+    );
+
+    /*
+     * Room is now physically occupied.
+     */
+    await client.query(
+      `
+        UPDATE rooms
+
+        SET
+          status = 'occupied',
+          updated_at =
+            CURRENT_TIMESTAMP
+
+        WHERE id = $1
+      `,
+      [booking.room_id],
+    );
+
+    const checkedInBooking = await selectBookingById(client, bookingId);
+
+    await client.query("COMMIT");
+
+    return checkedInBooking;
+  } catch (error) {
+    await client.query("ROLLBACK");
+
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+export const checkOutBooking = async (bookingId) => {
+  const client = await getClient();
+
+  try {
+    await client.query("BEGIN");
+
+    const result = await client.query(
+      `
+          SELECT
+            bookings.id,
+            bookings.status,
+            bookings.room_id,
+            bookings.total_amount,
+
+            rooms.status
+              AS room_status,
+
+            COALESCE(
+              booking_payment_summary.remaining_balance,
+              bookings.total_amount
+            ) AS remaining_balance
+
+          FROM bookings
+
+          INNER JOIN rooms
+            ON bookings.room_id =
+               rooms.id
+
+          LEFT JOIN booking_payment_summary
+            ON bookings.id =
+               booking_payment_summary.booking_id
+
+          WHERE bookings.id = $1
+
+          FOR UPDATE OF bookings, rooms
+        `,
+      [bookingId],
+    );
+
+    if (result.rows.length === 0) {
+      throw createError("Booking not found", 404);
+    }
+
+    const booking = result.rows[0];
+
+    if (booking.status !== "checked_in") {
+      throw createError("Only checked-in bookings can be checked out", 409);
+    }
+
+    /*
+     * Prevent checkout when payment
+     * balance remains.
+     */
+    if (Number(booking.remaining_balance) > 0) {
+      throw createError(
+        `Booking has a remaining balance of ${Number(
+          booking.remaining_balance,
+        ).toFixed(2)}`,
+        409,
+      );
+    }
+
+    await client.query(
+      `
+        UPDATE bookings
+
+        SET
+          status = 'checked_out',
+          updated_at =
+            CURRENT_TIMESTAMP
+
+        WHERE id = $1
+      `,
+      [bookingId],
+    );
+
+    /*
+     * Guest has left.
+     *
+     * Room is not immediately available because
+     * housekeeping must clean it first.
+     */
+    await client.query(
+      `
+        UPDATE rooms
+
+        SET
+          status = 'cleaning',
+          updated_at =
+            CURRENT_TIMESTAMP
+
+        WHERE id = $1
+      `,
+      [booking.room_id],
+    );
+
+    const checkedOutBooking = await selectBookingById(client, bookingId);
+
+    await client.query("COMMIT");
+
+    return checkedOutBooking;
+  } catch (error) {
+    await client.query("ROLLBACK");
+
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+export const findBookingStatusHistory = async (bookingId) => {
+  const result = await pool.query(
+    `
+          SELECT
+            id,
+            booking_id,
+            old_status,
+            new_status,
+            changed_at
+
+          FROM booking_status_history
+
+          WHERE booking_id = $1
+
+          ORDER BY
+            changed_at ASC,
+            id ASC
+        `,
+    [bookingId],
+  );
+
+  return result.rows;
+};

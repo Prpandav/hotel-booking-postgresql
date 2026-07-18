@@ -1,9 +1,12 @@
 import {
   cancelBooking,
+  checkInBooking,
+  checkOutBooking,
   createBooking,
   findAllBookings,
   findAvailableRooms,
   findBookingById,
+  findBookingStatusHistory,
   updateBookingDetails,
 } from "../repositories/bookingRepository.js";
 
@@ -298,6 +301,64 @@ export const removeBooking = async (req, res, next) => {
     res.status(200).json({
       message: "Booking cancelled successfully",
       data: booking,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const checkIn = async (req, res, next) => {
+  try {
+    const bookingId = parsePositiveInteger(req.params.id, "booking id");
+
+    const booking = await checkInBooking(bookingId);
+
+    res.status(200).json({
+      message: "Guest checked in successfully",
+
+      data: booking,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const checkOut = async (req, res, next) => {
+  try {
+    const bookingId = parsePositiveInteger(req.params.id, "booking id");
+
+    const booking = await checkOutBooking(bookingId);
+
+    res.status(200).json({
+      message: "Guest checked out successfully",
+
+      data: booking,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getBookingHistory = async (req, res, next) => {
+  try {
+    const bookingId = parsePositiveInteger(req.params.id, "booking id");
+
+    const booking = await findBookingById(bookingId);
+
+    if (!booking) {
+      throw createError("Booking not found", 404);
+    }
+
+    const history = await findBookingStatusHistory(bookingId);
+
+    res.status(200).json({
+      booking_id: bookingId,
+
+      current_status: booking.status,
+
+      count: history.length,
+
+      data: history,
     });
   } catch (error) {
     next(error);
