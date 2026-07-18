@@ -7,6 +7,7 @@ import { getAvailableRooms } from "../api/bookingApi";
 import RoomCard from "../components/RoomCard";
 import Loading from "../components/Loading";
 import ErrorMessage from "../components/ErrorMessage";
+import { unwrapArray } from "../utils/apiUtils";
 
 function Rooms() {
   const [searchParams] = useSearchParams();
@@ -61,9 +62,7 @@ function Rooms() {
         }
         */
 
-        const roomData = Array.isArray(response)
-          ? response
-          : response.data || [];
+        const roomData = unwrapArray(response, "rooms");
 
         setRooms(roomData);
       } catch (error) {
@@ -90,8 +89,15 @@ function Rooms() {
 
               <p>Select your travel dates and number of guests first.</p>
 
-              <Link to="/" className="btn btn-primary">
-                Search Rooms
+              <Link
+                to={
+                  `/?checkIn=${checkIn}` +
+                  `&checkOut=${checkOut}` +
+                  `&guests=${guests}`
+                }
+                className="btn btn-outline"
+              >
+                Change Search
               </Link>
             </div>
           </div>

@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 function SearchForm() {
   const navigate = useNavigate();
+  const today = new Date().toISOString().split("T")[0];
+  const [searchParams] = useSearchParams();
 
   const [formData, setFormData] = useState({
-    checkIn: "",
-    checkOut: "",
-    guests: 1,
+    checkIn: searchParams.get("checkIn") || "",
+
+    checkOut: searchParams.get("checkOut") || "",
+
+    guests: searchParams.get("guests") || 1,
   });
 
   const [error, setError] = useState("");
@@ -15,10 +19,22 @@ function SearchForm() {
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    setFormData((previousData) => ({
-      ...previousData,
-      [name]: value,
-    }));
+    setFormData((previousData) => {
+      const updatedData = {
+        ...previousData,
+        [name]: value,
+      };
+
+      if (
+        name === "checkIn" &&
+        previousData.checkOut &&
+        previousData.checkOut <= value
+      ) {
+        updatedData.checkOut = "";
+      }
+
+      return updatedData;
+    });
 
     setError("");
   };
@@ -65,6 +81,7 @@ function SearchForm() {
             id="checkIn"
             type="date"
             name="checkIn"
+            min={today}
             value={formData.checkIn}
             onChange={handleChange}
           />
@@ -77,6 +94,7 @@ function SearchForm() {
             id="checkOut"
             type="date"
             name="checkOut"
+            min={formData.checkIn || today}
             value={formData.checkOut}
             onChange={handleChange}
           />

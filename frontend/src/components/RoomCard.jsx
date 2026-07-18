@@ -29,7 +29,7 @@ function RoomCard({ room, checkIn, checkOut, guests }) {
 
           {room.base_price && (
             <div className="room-price">
-              <strong>₹{room.base_price}</strong>
+              <strong>₹{Number(room.base_price).toLocaleString("en-IN")}</strong>
 
               <span>/ night</span>
             </div>

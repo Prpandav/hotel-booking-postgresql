@@ -128,6 +128,7 @@
 
 .hero-content h1 {
     max-width: 650px;
+    color: var(--color-text);
 
     margin-bottom: 20px;
 
@@ -342,6 +343,7 @@
 
     .hero-content h1 {
         letter-spacing: -1px;
+        color: var(--color-text);
     }
 
     .search-form-grid {
@@ -376,7 +378,7 @@
 
 .rooms-page-header h1 {
     margin-bottom: 8px;
-
+    color: var(--color-text);
     font-size: 2.5rem;
 }
 
@@ -643,6 +645,7 @@
 
 .empty-state h1,
 .empty-state h2 {
+    color: var(--color-text);
     margin-bottom: 12px;
 }
 
@@ -675,4 +678,962 @@
         flex-direction: column;
     }
 
+}
+
+/* ================================
+   Room Details
+================================ */
+
+.room-details-section {
+    padding: 50px 0 80px;
+}
+
+.room-back-link {
+    display: inline-block;
+
+    margin-bottom: 28px;
+
+    color: var(--color-text-secondary);
+
+    font-size: 0.9rem;
+
+    font-weight: 500;
+
+    transition: var(--transition);
+}
+
+.room-back-link:hover {
+    color: var(--color-primary);
+}
+
+
+.room-details-grid {
+    display: grid;
+
+    grid-template-columns:
+        1.1fr 0.9fr;
+
+    gap: 56px;
+
+    align-items: start;
+}
+
+
+/* ================================
+   Room Image
+================================ */
+
+.room-details-image {
+    position: sticky;
+
+    top: 100px;
+}
+
+.room-image-placeholder {
+    min-height: 520px;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    padding: 28px;
+
+    background:
+        linear-gradient(135deg,
+            #d9ddd6,
+            #ece9e1);
+
+    border-radius:
+        var(--radius-large);
+}
+
+.room-image-placeholder span {
+    padding: 8px 16px;
+
+    color: white;
+
+    background-color:
+        rgba(47, 81, 71, 0.9);
+
+    border-radius: 24px;
+
+    font-size: 0.9rem;
+
+    font-weight: 600;
+}
+
+
+/* ================================
+   Details Content
+================================ */
+
+.room-details-content h1 {
+    margin-bottom: 16px;
+    color:
+        var(--color-text);
+    font-size:
+        clamp(2.2rem,
+            5vw,
+            3.8rem);
+
+    line-height: 1.1;
+
+    letter-spacing: -1.5px;
+}
+
+.room-description {
+    margin-bottom: 32px;
+
+    color:
+        var(--color-text-secondary);
+
+    font-size: 1rem;
+}
+
+
+/* ================================
+   Room Info
+================================ */
+
+.room-details-info {
+    margin-bottom: 32px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    border-top:
+        1px solid var(--color-border);
+
+    border-bottom:
+        1px solid var(--color-border);
+}
+
+.room-info-item {
+    padding: 20px 14px;
+}
+
+.room-info-item:not( :last-child) {
+    border-right:
+        1px solid var(--color-border);
+}
+
+.room-info-item span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color:
+        var(--color-text-secondary);
+
+    font-size: 0.75rem;
+}
+
+.room-info-item strong {
+    font-size: 0.9rem;
+}
+
+
+/* ================================
+   Amenities
+================================ */
+
+.room-details-amenities {
+    margin-bottom: 32px;
+}
+
+.room-details-amenities h3 {
+    margin-bottom: 14px;
+}
+
+.amenities-list {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+}
+
+.amenities-list span {
+    padding: 8px 14px;
+
+    color:
+        var(--color-text-secondary);
+
+    background-color:
+        var(--color-surface);
+
+    border:
+        1px solid var(--color-border);
+
+    border-radius: 24px;
+
+    font-size: 0.8rem;
+}
+
+
+/* ================================
+   Selected Stay
+================================ */
+
+.selected-stay {
+    margin-bottom: 28px;
+
+    padding: 22px;
+
+    background-color:
+        var(--color-surface);
+
+    border:
+        1px solid var(--color-border);
+
+    border-radius:
+        var(--radius-medium);
+}
+
+.selected-stay h3 {
+    margin-bottom: 18px;
+}
+
+.selected-stay-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 16px;
+}
+
+.selected-stay-grid span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color:
+        var(--color-text-secondary);
+
+    font-size: 0.75rem;
+}
+
+.selected-stay-grid strong {
+    font-size: 0.9rem;
+}
+
+
+.room-book-button {
+    width: 100%;
+
+    min-height: 52px;
+}
+@media (max-width: 900px) {
+
+    .room-details-grid {
+        grid-template-columns: 1fr;
+
+        gap: 36px;
+    }
+
+    .room-details-image {
+        position: static;
+    }
+
+    .room-image-placeholder {
+        min-height: 380px;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .room-details-info {
+        grid-template-columns: 1fr;
+    }
+
+    .room-info-item:not( :last-child) {
+        border-right: none;
+
+        border-bottom:
+            1px solid var(--color-border);
+    }
+
+    .selected-stay-grid {
+        grid-template-columns: 1fr;
+
+        gap: 14px;
+    }
+
+}
+
+/* ================================
+   Booking Page
+================================ */
+
+.booking-section {
+    padding: 60px 0 90px;
+}
+
+.booking-header {
+    max-width: 650px;
+
+    margin-bottom: 40px;
+}
+
+.booking-header h1 {
+    margin-bottom: 10px;
+    color:
+        var(--color-text);
+    font-size:
+        clamp(2.4rem,
+            5vw,
+            3.8rem);
+
+    letter-spacing: -1.5px;
+}
+
+.booking-header p {
+    color:
+        var(--color-text-secondary);
+}
+
+
+/* ================================
+   Booking Layout
+================================ */
+
+.booking-layout {
+    display: grid;
+
+    grid-template-columns:
+        1.3fr 0.7fr;
+
+    gap: 40px;
+
+    align-items: start;
+}
+
+
+/* ================================
+   Booking Form
+================================ */
+
+.booking-form {
+    padding: 32px;
+
+    background-color:
+        var(--color-surface);
+
+    border:
+        1px solid var(--color-border);
+
+    border-radius:
+        var(--radius-medium);
+}
+
+.booking-form-section h2 {
+    margin-bottom: 24px;
+
+    font-size: 1.4rem;
+}
+
+.booking-form-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 20px;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.booking-form textarea {
+    width: 100%;
+
+    padding: 12px 14px;
+
+    resize: vertical;
+
+    color:
+        var(--color-text);
+
+    background-color:
+        var(--color-background);
+
+    border:
+        1px solid var(--color-border);
+
+    border-radius:
+        var(--radius-small);
+
+    outline: none;
+
+    transition:
+        var(--transition);
+}
+
+.booking-form textarea:focus {
+    border-color:
+        var(--color-primary);
+
+    background-color:
+        var(--color-surface);
+}
+
+.booking-error {
+    margin-top: 24px;
+
+    padding: 14px;
+
+    color:
+        var(--color-error);
+
+    background-color:
+        #fff5f4;
+
+    border:
+        1px solid #f2cac6;
+
+    border-radius:
+        var(--radius-small);
+}
+
+.booking-submit-button {
+    width: 100%;
+
+    min-height: 52px;
+
+    margin-top: 24px;
+}
+
+.booking-submit-button:disabled {
+    opacity: 0.7;
+
+    cursor: not-allowed;
+}
+
+
+/* ================================
+   Booking Summary
+================================ */
+
+.booking-summary {
+    position: sticky;
+
+    top: 100px;
+
+    padding: 28px;
+
+    background-color:
+        var(--color-surface);
+
+    border:
+        1px solid var(--color-border);
+
+    border-radius:
+        var(--radius-medium);
+
+    box-shadow:
+        var(--shadow-small);
+}
+
+.booking-summary h2 {
+    margin-bottom: 5px;
+}
+
+.booking-room-number {
+    margin-bottom: 24px;
+
+    color:
+        var(--color-text-secondary);
+
+    font-size: 0.9rem;
+}
+
+.booking-summary-details {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 18px;
+
+    padding: 22px 0;
+
+    border-top:
+        1px solid var(--color-border);
+
+    border-bottom:
+        1px solid var(--color-border);
+}
+
+.booking-summary-details div {
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+.booking-summary-details span {
+    color:
+        var(--color-text-secondary);
+
+    font-size: 0.85rem;
+}
+
+.booking-summary-details strong {
+    text-align: right;
+
+    font-size: 0.9rem;
+}
+
+.booking-summary-note {
+    margin-top: 20px;
+
+    color:
+        var(--color-text-secondary);
+
+    font-size: 0.8rem;
+}
+@media (max-width: 850px) {
+
+    .booking-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .booking-summary {
+        position: static;
+
+        order: -1;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .booking-form {
+        padding: 22px;
+    }
+
+    .booking-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .full-width {
+        grid-column: auto;
+    }
+
+}
+
+/* ================================
+   Booking Details
+================================ */
+
+.booking-details-section {
+    padding: 60px 0 90px;
+}
+
+
+.booking-details-header {
+    margin-bottom: 36px;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 24px;
+}
+
+
+.booking-details-header h1 {
+    margin-bottom: 8px;
+    color:
+        var(--color-text);
+    font-size:
+        clamp(2.4rem,
+            5vw,
+            3.8rem);
+
+    letter-spacing: -1.5px;
+}
+
+
+.booking-details-header p {
+    color:
+        var(--color-text-secondary);
+}
+
+
+/* ================================
+   Booking Status
+================================ */
+
+.booking-status {
+    padding: 8px 16px;
+
+    border-radius: 24px;
+
+    font-size: 0.8rem;
+
+    font-weight: 700;
+
+    text-transform: capitalize;
+}
+
+
+.booking-status-confirmed {
+    color:
+        var(--color-success);
+
+    background-color:
+        #edf8f1;
+}
+
+
+.booking-status-pending {
+    color: #946200;
+
+    background-color:
+        #fff7df;
+}
+
+
+.booking-status-cancelled {
+    color:
+        var(--color-error);
+
+    background-color:
+        #fff1f0;
+}
+
+
+/* ================================
+   Success Message
+================================ */
+
+.success-message {
+    margin-bottom: 24px;
+
+    padding: 16px;
+
+    color:
+        var(--color-success);
+
+    background-color:
+        #edf8f1;
+
+    border:
+        1px solid #c9e8d3;
+
+    border-radius:
+        var(--radius-small);
+}
+
+
+/* ================================
+   Details Layout
+================================ */
+
+.booking-details-layout {
+    display: grid;
+
+    grid-template-columns:
+        1.3fr 0.7fr;
+
+    gap: 40px;
+
+    align-items: start;
+}
+
+
+.booking-details-card {
+    background-color:
+        var(--color-surface);
+
+    border:
+        1px solid var(--color-border);
+
+    border-radius:
+        var(--radius-medium);
+}
+
+
+/* ================================
+   Detail Sections
+================================ */
+
+.booking-detail-section {
+    padding: 30px;
+}
+
+
+.booking-detail-section:not( :last-child) {
+    border-bottom:
+        1px solid var(--color-border);
+}
+
+
+.booking-detail-section h2 {
+    margin-bottom: 22px;
+
+    font-size: 1.25rem;
+}
+
+
+.booking-detail-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 24px;
+}
+
+
+.booking-detail-item span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color:
+        var(--color-text-secondary);
+
+    font-size: 0.8rem;
+}
+
+
+.booking-detail-item strong {
+    font-size: 0.95rem;
+}
+
+
+.special-request-text {
+    color:
+        var(--color-text-secondary);
+
+    line-height: 1.7;
+}
+
+
+/* ================================
+   Booking Actions
+================================ */
+
+.booking-actions-card {
+    position: sticky;
+
+    top: 100px;
+
+    padding: 28px;
+
+    background-color:
+        var(--color-surface);
+
+    border:
+        1px solid var(--color-border);
+
+    border-radius:
+        var(--radius-medium);
+
+    box-shadow:
+        var(--shadow-small);
+}
+
+
+.booking-actions-card h2 {
+    margin-bottom: 10px;
+}
+
+
+.booking-actions-card p {
+    margin-bottom: 24px;
+
+    color:
+        var(--color-text-secondary);
+
+    font-size: 0.9rem;
+}
+
+
+.booking-cancel-button {
+    width: 100%;
+
+    margin-bottom: 12px;
+
+    color:
+        var(--color-error);
+
+    background-color:
+        #fff5f4;
+
+    border:
+        1px solid #f2cac6;
+}
+
+
+.booking-cancel-button:hover {
+    color: white;
+
+    background-color:
+        var(--color-error);
+}
+
+
+.booking-cancel-button:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+}
+
+
+.booking-home-button {
+    width: 100%;
+}
+@media (max-width: 850px) {
+
+    .booking-details-layout {
+        grid-template-columns: 1fr;
+    }
+
+
+    .booking-actions-card {
+        position: static;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .booking-details-header {
+        flex-direction: column;
+    }
+
+
+    .booking-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .booking-detail-section {
+        padding: 22px;
+    }
+
+}
+
+.booking-estimated-total {
+    margin-top: 22px;
+
+    padding-top: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    border-top:
+        1px solid var(--color-border);
+}
+
+.booking-estimated-total span {
+    color:
+        var(--color-text-secondary);
+
+    font-size: 0.9rem;
+}
+
+.booking-estimated-total strong {
+    color:
+        var(--color-primary);
+
+    font-size: 1.2rem;
+}
+
+@media (max-width: 500px) {
+
+  .navbar {
+    height: auto;
+
+    padding: 16px 0;
+  }
+
+  .navbar-container {
+    gap: 16px;
+
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .navbar-links {
+    width: 100%;
+
+    gap: 22px;
+  }
+
+}
+@media (max-width: 600px) {
+
+    .btn {
+        min-height: 46px;
+    }
+
+    .rooms-page-header .btn {
+        width: 100%;
+    }
+
+}
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline:
+        3px solid rgba(47,
+            81,
+            71,
+            0.25);
+
+    outline-offset: 3px;
+}
+
+.not-found {
+    min-height:
+        calc(100vh - 140px);
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 60px 0;
+}
+
+.not-found-content {
+    max-width: 600px;
+}
+
+.not-found-content h1 {
+    margin-bottom: 14px;
+    color:
+        var(--color-text);
+    font-size:
+        clamp(2.8rem,
+            7vw,
+            5rem);
+
+    letter-spacing: -2px;
+}
+
+.not-found-content p {
+    margin-bottom: 28px;
+
+    color:
+        var(--color-text-secondary);
 }
