@@ -1,0 +1,85 @@
+/* ================================
+   Navbar
+================================ */
+
+.navbar {
+    height: 70px;
+
+    display: flex;
+    align-items: center;
+
+    background-color: var(--color-surface);
+
+    border-bottom: 1px solid var(--color-border);
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+}
+
+.navbar-container {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+.navbar-logo {
+    font-size: 1.5rem;
+
+    font-weight: 700;
+
+    color: var(--color-text);
+}
+
+.navbar-logo span {
+    color: var(--color-primary);
+}
+
+.navbar-links {
+    display: flex;
+
+    align-items: center;
+
+    gap: 28px;
+}
+
+.navbar-links a {
+    color: var(--color-text-secondary);
+
+    font-weight: 500;
+
+    transition: var(--transition);
+}
+
+.navbar-links a:hover {
+    color: var(--color-primary);
+}
+
+.navbar-links .nav-active {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+/* ================================
+   Footer
+================================ */
+
+.footer {
+    padding: 28px 0;
+
+    background-color: var(--color-surface);
+
+    border-top: 1px solid var(--color-border);
+}
+
+.footer-container {
+    text-align: center;
+
+    color: var(--color-text-secondary);
+
+    font-size: 0.9rem;
+}
