@@ -10,6 +10,8 @@ import customerRoutes from "./routes/customerRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
+import searchRoutes from "./routes/searchRoutes.js";
+import auditRoutes from "./routes/auditRoutes.js";
 
 const app = express();
 
@@ -28,6 +30,8 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/search", searchRoutes);
+app.use("/api/audit-logs", auditRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

@@ -8,6 +8,7 @@ import RoomDetails from "./pages/RoomDetails";
 import BookRoom from "./pages/BookRoom";
 import BookingDetails from "./pages/BookingDetails";
 import NotFound from "./pages/NotFound";
+import SearchPage from "./pages/SearchPage";
 
 function App() {
   return (
@@ -23,6 +24,8 @@ function App() {
           <Route path="/book/:roomId" element={<BookRoom />} />
 
           <Route path="/bookings/:id" element={<BookingDetails />} />
+
+          <Route path="/search" element={<SearchPage />} />
 
           <Route path="*" element={<NotFound />} />
         </Route>

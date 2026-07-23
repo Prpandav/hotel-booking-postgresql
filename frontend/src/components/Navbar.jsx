@@ -22,6 +22,9 @@ function Navbar() {
           >
             Rooms
           </NavLink>
+
+          <NavLink to="/search">Search</NavLink>
+          
         </nav>
       </div>
     </header>
