@@ -83,6 +83,13 @@ const validateDate = (value, fieldName) => {
 export const getBookings = async (req, res, next) => {
   try {
     const filters = {};
+    const page = parsePositiveInteger(req.query.page ?? 1, "page");
+
+    const limit = parsePositiveInteger(req.query.limit ?? 20, "limit");
+
+    if (limit > 100) {
+      throw createError("limit cannot exceed 100");
+    }
 
     if (req.query.status) {
       if (!bookingStatuses.has(req.query.status)) {
@@ -121,12 +128,22 @@ export const getBookings = async (req, res, next) => {
       filters.toDate = validateDate(req.query.to_date, "to_date");
     }
 
-    const bookings = await findAllBookings(filters);
+    const result = await findAllBookings(filters, {
+      page,
+      limit,
+    });
 
     res.status(200).json({
-      count: bookings.length,
-      data: bookings,
+      pagination: {
+        page: result.page,
+        limit: result.limit,
+        total: result.total,
+        total_pages: result.totalPages,
+      },
+
+      data: result.data,
     });
+
   } catch (error) {
     next(error);
   }

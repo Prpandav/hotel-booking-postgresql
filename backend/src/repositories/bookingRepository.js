@@ -72,42 +72,46 @@ export const findBookingById = async (bookingId) => {
   return selectBookingById(pool, bookingId);
 };
 
-export const findAllBookings = async (filters = {}) => {
+export const findAllBookings = async (filters = {}, pagination = {}) => {
   const conditions = [];
-  const values = [];
+  const filterValues = [];
 
-  const addValue = (value) => {
-    values.push(value);
+  const page = pagination.page ?? 1;
+  const limit = pagination.limit ?? 20;
+  const offset = (page - 1) * limit;
 
-    return `$${values.length}`;
+  const addFilterValue = (value) => {
+    filterValues.push(value);
+
+    return `$${filterValues.length}`;
   };
 
   if (filters.status) {
-    const placeholder = addValue(filters.status);
+    const placeholder = addFilterValue(filters.status);
 
     conditions.push(`bookings.status = ${placeholder}`);
   }
 
   if (filters.customerId !== undefined) {
-    const placeholder = addValue(filters.customerId);
+    const placeholder = addFilterValue(filters.customerId);
 
     conditions.push(`bookings.customer_id = ${placeholder}`);
   }
 
   if (filters.roomId !== undefined) {
-    const placeholder = addValue(filters.roomId);
+    const placeholder = addFilterValue(filters.roomId);
 
     conditions.push(`bookings.room_id = ${placeholder}`);
   }
 
   if (filters.fromDate) {
-    const placeholder = addValue(filters.fromDate);
+    const placeholder = addFilterValue(filters.fromDate);
 
     conditions.push(`bookings.check_in_date >= ${placeholder}::DATE`);
   }
 
   if (filters.toDate) {
-    const placeholder = addValue(filters.toDate);
+    const placeholder = addFilterValue(filters.toDate);
 
     conditions.push(`bookings.check_in_date <= ${placeholder}::DATE`);
   }
@@ -115,6 +119,7 @@ export const findAllBookings = async (filters = {}) => {
   if (filters.scope === "upcoming") {
     conditions.push(`
       bookings.check_in_date > CURRENT_DATE
+
       AND bookings.status IN (
         'pending',
         'confirmed'
@@ -124,8 +129,12 @@ export const findAllBookings = async (filters = {}) => {
 
   if (filters.scope === "current") {
     conditions.push(`
-      CURRENT_DATE >= bookings.check_in_date
-      AND CURRENT_DATE < bookings.check_out_date
+      CURRENT_DATE >=
+        bookings.check_in_date
+
+      AND CURRENT_DATE <
+          bookings.check_out_date
+
       AND bookings.status IN (
         'confirmed',
         'checked_in'
@@ -134,34 +143,62 @@ export const findAllBookings = async (filters = {}) => {
   }
 
   if (filters.scope === "completed") {
-    conditions.push(`
-      bookings.status = 'checked_out'
-    `);
+    conditions.push("bookings.status = 'checked_out'");
   }
 
   if (filters.scope === "cancelled") {
-    conditions.push(`
-      bookings.status = 'cancelled'
-    `);
+    conditions.push("bookings.status = 'cancelled'");
   }
 
   const whereClause =
     conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
-  const result = await pool.query(
-    `
-      ${bookingSelect}
+  const queryValues = [...filterValues, limit, offset];
 
-      ${whereClause}
+  const limitPlaceholder = `$${filterValues.length + 1}`;
 
-      ORDER BY
-        bookings.check_in_date DESC,
-        bookings.created_at DESC
-    `,
-    values,
-  );
+  const offsetPlaceholder = `$${filterValues.length + 2}`;
 
-  return result.rows;
+  const [dataResult, countResult] = await Promise.all([
+    pool.query(
+      `
+          ${bookingSelect}
+
+          ${whereClause}
+
+          ORDER BY
+            bookings.created_at DESC,
+            bookings.id DESC
+
+          LIMIT ${limitPlaceholder}
+
+          OFFSET ${offsetPlaceholder}
+        `,
+      queryValues,
+    ),
+
+    pool.query(
+      `
+          SELECT
+            COUNT(*) AS total
+
+          FROM bookings
+
+          ${whereClause}
+        `,
+      filterValues,
+    ),
+  ]);
+
+  const total = Number(countResult.rows[0].total);
+
+  return {
+    data: dataResult.rows,
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
+  };
 };
 
 export const findAvailableRooms = async ({
